@@ -5,12 +5,13 @@ import ProductItem from './ProductItem';
 
 type ProductListProps = {
   products: Product[];
+  clickItem : Function;
 };
 
-const ProductList = ({ products }: ProductListProps) => (
+const ProductList = ({ products, clickItem }: ProductListProps) => (
   <Container>
     {products.map((product) => (
-      <ProductItem key={product.id} product={product} />
+      <ProductItem key={product.id} product={product} onClick={() => clickItem(product.id)}/>
     ))}
   </Container>
 );
