@@ -1,21 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { VscChevronLeft, VscChevronRight } from 'react-icons/vsc';
 
-const Pagination = () => {
+type PaginationProps = {
+  page : number;
+  setPage : Function;
+  total : number;
+}
+
+const Pagination = ({page,setPage,total}:PaginationProps) => {
+  const [ start,setStart] = useState(page-(page%5)+1)
+  const [ end,setEnd] = useState(page-(page%5)+5)
+  const numPages = Math.ceil(total/10)
+
+  useEffect(() => {
+    if(page%5 === 0)return;
+    else{
+      setStart(page-(page%5)+1)
+      setEnd(page-(page%5)+5)
+    }
+  },[page])
+  
   return (
     <Container>
-      <Button disabled>
+      <Button
+        onClick={() => {setPage(start-5)}} 
+        disabled={start===1}>
         <VscChevronLeft />
       </Button>
       <PageWrapper>
-        {[1, 2, 3, 4, 5].map((page) => (
-          <Page key={page} selected={page === 1} disabled={page === 1}>
-            {page}
-          </Page>
-        ))}
+        {[0, 1, 2, 3, 4].map((p) => {
+          if(p+start <= numPages){
+            return(
+              <Page key={p} selected={(p+start) === page} disabled={(p+start) === page} onClick={() => setPage(p+start)}>
+                {p+start}
+              </Page>
+            )
+          }else return null
+          })}
       </PageWrapper>
-      <Button disabled={false}>
+      <Button 
+          onClick={() => {setPage(end+1)}} 
+          disabled={page===numPages}>
         <VscChevronRight />
       </Button>
     </Container>
