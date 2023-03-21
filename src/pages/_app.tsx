@@ -1,24 +1,48 @@
 import type { AppProps } from 'next/app';
+import { Provider } from 'react-redux';
 import styled from 'styled-components';
-
 import setupMSW from '../api/setup';
 import GlobalStyle from '../styles/GlobalStyle';
+import { configureStore } from '@reduxjs/toolkit';
+import { info } from '../reducers/info';
+import { createWrapper } from 'next-redux-wrapper';
 
 setupMSW();
 
-function MyApp({ Component, pageProps }: AppProps) {
+const makeStore = () => {
+  const store = configureStore({
+    reducer : { info : info.reducer },
+    devTools: process.env.NODE_ENV === 'development'
+  });
+
+  return store;
+};
+
+const store = makeStore();
+
+function MyApp({ Component, pageProps,...rest }: AppProps) {
+  const {store, props} = wrapper.useWrappedStore(rest);
+
   return (
-    <>
+    <Provider store={store}>
       <GlobalStyle />
       <Background />
       <Content>
         <Component {...pageProps} />
       </Content>
-    </>
+    </Provider>
   );
 }
 
-export default MyApp;
+export type RootState = ReturnType<typeof store.getState>
+
+const wrapper = createWrapper<AppStore>(makeStore, {
+  debug: process.env.NODE_ENV === 'production'
+});
+
+export type AppStore = ReturnType<typeof makeStore>;
+
+export default wrapper.withRedux(MyApp);
 
 const Background = styled.div`
   position: fixed;

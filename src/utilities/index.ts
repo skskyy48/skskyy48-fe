@@ -11,3 +11,7 @@ export const parseQueryString = (search: string): Record<string, string> =>
 
       return acc;
     }, {} as Record<string, string>);
+
+export const numberWithCommas = (x:number):string => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

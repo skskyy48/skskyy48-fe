@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 
 import { Product } from '../types/product';
+import { numberWithCommas } from '../utilities';
 
 type ProductItemProps = {
   product: Product;
+  onClick : Function;
 };
 
-const ProductItem = ({ product: { name, thumbnail, price } }: ProductItemProps) => (
-  <Container>
+const ProductItem = ({ product: { name, thumbnail, price },onClick }: ProductItemProps) => (
+  <Container onClick={() => onClick()}>
     <Thumbnail src={thumbnail ? thumbnail : '/defaultThumbnail.jpg'} />
     <Name>{name}</Name>
-    <Price>{price}</Price>
+    <Price>{numberWithCommas(price)}</Price>
   </Container>
 );
 
